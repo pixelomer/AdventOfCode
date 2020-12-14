@@ -23,8 +23,6 @@ module.exports = (input, part) => {
 				numArray[i] = mask[i];
 			}
 		}
-		console.log(mask);
-		console.log(numArray.join(""));
 		const floatingCount = mask.match(/X/g).length;
 		for (let i=0; i<(1 << floatingCount); i++) {
 			let newMask = convertToBinary(i).padStart(36, "0");
@@ -42,7 +40,6 @@ module.exports = (input, part) => {
 	const mem = {};
 	let mask = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 	lines.forEach((line)=>{
-		console.log(line);
 		if (line.startsWith("mask = ")) {
 			mask = line.substr(7);
 		}
@@ -51,7 +48,6 @@ module.exports = (input, part) => {
 			const address = parseInt(match[1]);
 			if (part === 1) {
 				const maskedValue = applyMask_v1(parseInt(match[2]), mask);
-				console.log(maskedValue);
 				mem[address] = maskedValue;
 			}
 			else if (part === 2) {
