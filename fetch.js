@@ -9,6 +9,7 @@
 //                   input.txt and README.md files if available.
 //                   solution.js files are not touched.
 
+const USE_SUBSCRIPTS = false;
 const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
@@ -18,9 +19,27 @@ const baseURL = "https://adventofcode.com";
 
 // Not the best parser but it works well enough
 //FIXME: <code><*>content</*></code> is not supported. <*> is ignored.
-function parseArticle(node, parent = null) {
+function parseArticle(node, spanHandler = null, parent = null) {
+	function convertToSubscript(str) {
+		const map = (
+			USE_SUBSCRIPTS ?
+			{
+				"0":"₀", "1":"₁", "2":"₂", "3":"₃", "4":"₄", "5":"₅", "6":"₆",
+				"7":"₇", "8":"₈", "9":"₉", "(":"₍", ")":"₎"
+			} : 
+			{
+				"0":"⁰", "1":"¹", "2":"²", "3":"³", "4":"⁴", "5":"⁵", "6":"⁶",
+				"7":"⁷", "8":"⁸", "9":"⁹", "(":"⁽", ")":"⁾"
+			}
+		);
+		return `(${str})`.split("").map((x)=>map[x]).join("");
+	}
+
 	let parsed = "";
 	let suffix = "";
+	if (spanHandler == null) {
+		spanHandler = (text) => null;
+	}
 	switch (node.nodeType) {
 		case HTMLParser.NodeType.ELEMENT_NODE:
 			if (parent && (parent.rawTagName === "code")) {
@@ -29,6 +48,17 @@ function parseArticle(node, parent = null) {
 			switch (node.rawTagName) {
 				case "h2":
 					return "";
+				case "span":
+					const title = node.attributes["title"];
+					if (title != null) {
+						const num = spanHandler(title);
+						if (num != null) {
+							node.appendChild(new HTMLParser.TextNode(
+								convertToSubscript(num.toString())
+							));
+						}
+					}
+					break;
 				case "p":
 					parsed += "\n";
 					break;
@@ -74,7 +104,7 @@ function parseArticle(node, parent = null) {
 			break;
 	}
 	node.childNodes.forEach((child)=>{
-		parsed += parseArticle(child, node);
+		parsed += parseArticle(child, spanHandler, node);
 	});
 	return (parsed + suffix)
 		.replace(/<\/?.*>/, "")
@@ -156,9 +186,18 @@ getMain("/events").then((main)=>{
 					if (!fs.existsSync(dirPath)) {
 						fs.mkdirSync(dirPath);
 					}
-					let parsedArticle = "# " + header + "\n" + parseArticle(articles[0]);
+					let subscripts = "";
+					let counter = 0;
+					const spanHandler = (text) => {
+						subscripts += `**[${++counter}]:** ${text}  \n`;
+						return counter;
+					}
+					let parsedArticle = "# " + header + "\n" + parseArticle(articles[0], spanHandler);
 					if (articles[1] != null) {
-						parsedArticle += "\n## Part Two\n" + parseArticle(articles[1]);
+						parsedArticle += "\n## Part Two\n" + parseArticle(articles[1], spanHandler);
+					}
+					if (subscripts !== "") {
+						parsedArticle += `\n## ${USE_SUBSCRIPTS ? "Subscripts" : "Superscripts"}\n\n` + subscripts;
 					}
 					fs.writeFileSync(`${dirPath}/README.md`, parsedArticle);
 					get(path + "/input").then((res) => res.text().then((str) => {
