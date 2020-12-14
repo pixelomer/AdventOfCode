@@ -69,7 +69,8 @@ function parseArticle(node, parent = null) {
 			parsed += node.rawText
 				.replace("<code>", "`" + newline)
 				.replace("\n</code>", "\n`")
-				.replace("</code>", "\n`");
+				.replace("</code>", "\n`")
+				.replace(/<\/?[a-z]+?>/g, "");
 			break;
 	}
 	node.childNodes.forEach((child)=>{
