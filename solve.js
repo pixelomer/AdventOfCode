@@ -64,6 +64,7 @@ let solve = require(`${process.cwd()}/solution.js`);
 let result;
 
 try {
+	let testsFailed = false;
 	if (fs.existsSync(`${process.cwd()}/tests`)) {
 		fs.readdirSync(`${process.cwd()}/tests`).forEach((fileName)=>{
 			if (fileName.startsWith(".") || !fileName.endsWith(".txt")) return;
@@ -75,14 +76,22 @@ try {
 			function test(part) {
 				if (expectedAnswers.length < part) return;
 				if (expectedAnswers[part-1].length <= 0) return;
+				const start = Date.now();
 				const result = solve(testData, part);
+				const end = Date.now();
 				if (result != expectedAnswers[part-1]) {
-					console.error(`${programName}: test "${fileName}" failed for part ${part} (expected ${expectedAnswers[part-1]}, got ${result})`);
-					process.exit(1);
+					console.error(`${programName}: test "${fileName}" failed (expected ${expectedAnswers[part-1]}, got ${result})`);
+					testsFailed = true;
+				}
+				else {
+					console.error(`${programName}: test "${fileName}" passed in ${(end - start)/1000.0}s`);
 				}
 			}
 			test(partNumber);
 		});
+	}
+	if (testsFailed) {
+		process.exit(1);
 	}
 	result = solve(inputString, partNumber);
 }
