@@ -186,18 +186,18 @@ getMain("/events").then((main)=>{
 					if (!fs.existsSync(dirPath)) {
 						fs.mkdirSync(dirPath);
 					}
-					let subscripts = "";
+					let references = "";
 					let counter = 0;
 					const spanHandler = (text) => {
-						subscripts += `**[${++counter}]:** ${text}  \n`;
+						references += `**[${++counter}]:** ${text}  \n`;
 						return counter;
 					}
 					let parsedArticle = "# " + header + "\n" + parseArticle(articles[0], spanHandler);
 					if (articles[1] != null) {
 						parsedArticle += "\n## Part Two\n" + parseArticle(articles[1], spanHandler);
 					}
-					if (subscripts !== "") {
-						parsedArticle += `\n## ${USE_SUBSCRIPTS ? "Subscripts" : "Superscripts"}\n\n` + subscripts;
+					if (references !== "") {
+						parsedArticle += `\n\n---\n\n` + references;
 					}
 					fs.writeFileSync(`${dirPath}/README.md`, parsedArticle);
 					get(path + "/input").then((res) => res.text().then((str) => {
