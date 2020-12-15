@@ -31,7 +31,7 @@ module.exports = (input, part) => {
 					case "id":
 						return false;
 					case "cats":
-					case "tress":
+					case "trees":
 						return aunt[key] <= knownData[key];
 					case "pomeranians":
 					case "goldfish":
