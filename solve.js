@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
-require("./utilities")
+require("./utilities");
 
 /*
 argv = [
@@ -12,6 +12,20 @@ argv = [
 	"<part>"
 ] 
 */
+
+const consoleLogOrig = console.log;
+const consoleErrorOrig = console.error;
+
+function removeConsoleLog() {
+	console.log = console.error = (...args) => {
+		consoleErrorOrig("[solver]", ...args);
+	};
+}
+
+function restoreConsoleLog() {
+	console.log = consoleLogOrig;
+	console.error = consoleErrorOrig;
+}
 
 const programName = path.basename(process.argv[1]);
 
@@ -77,7 +91,9 @@ try {
 				if (expectedAnswers.length < part) return;
 				if (expectedAnswers[part-1].length <= 0) return;
 				const start = Date.now();
+				removeConsoleLog();
 				const result = solve(testData, part);
+				restoreConsoleLog();
 				const end = Date.now();
 				if (result != expectedAnswers[part-1]) {
 					console.error(`${programName}: test "${fileName}" failed (expected ${expectedAnswers[part-1]}, got ${result})`);
@@ -93,7 +109,9 @@ try {
 	if (testsFailed) {
 		process.exit(1);
 	}
+	removeConsoleLog();
 	result = solve(inputString, partNumber);
+	restoreConsoleLog();
 }
 catch (err) {
 	console.error(err.stack);
