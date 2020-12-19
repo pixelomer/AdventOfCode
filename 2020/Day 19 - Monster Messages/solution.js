@@ -36,9 +36,6 @@ module.exports = (input, part) => {
 			regex += ")";
 		}
 		regex += ")";
-		if (ruleObject.looping) {
-			regex += "+";
-		}
 		ruleObject.regex = regex;
 		return regex;
 	}
