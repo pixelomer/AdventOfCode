@@ -5,8 +5,7 @@ module.exports = (input, part) => {
 		const split = value.split(": ");
 		rules[parseInt(split[0])] = {
 			raw: split.slice(1).join(": "),
-			regex: null,
-			looping: false
+			regex: null
 		};
 	});
 	const messages = split[1].split("\n");
