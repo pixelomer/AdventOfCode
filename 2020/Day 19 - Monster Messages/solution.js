@@ -45,10 +45,9 @@ module.exports = (input, part) => {
 
 	if (part === 2) {
 		rules[8].regex = `${buildRegex(42)}+`;
-		rules[8].looping = true;
+
 		buildRegex(31);
 		let rule11Regex = "(?:";
-
 		// This is a very hacky solution and it'll only work if N <= max in
 		//   (rule42){N}(rule31){N}
 		// I didn't want to rewrite my code so I did it this way.
@@ -60,9 +59,7 @@ module.exports = (input, part) => {
 				rule11Regex += "|";
 			}
 		}
-
 		rules[11].regex = rule11Regex + ")";
-		rules[11].looping = true;
 	}
 
 	const regex = new RegExp(`^${buildRegex(0)}$`, "g");
