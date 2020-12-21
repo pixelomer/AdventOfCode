@@ -85,7 +85,7 @@ try {
 			let testData = fs.readFileSync(`${process.cwd()}/tests/${fileName}`).toString();
 			const splitTestData = testData.split("\n");
 			testData = splitTestData.slice(1).join("\n");
-			const expectedAnswers = splitTestData[0].split(",");
+			const expectedAnswers = splitTestData[0].split("|");
 			delete splitTestData;
 			function test(part) {
 				if (expectedAnswers.length < part) return;
