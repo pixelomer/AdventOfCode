@@ -115,14 +115,6 @@ class WorldMapTile {
 			this.contents = inputData.map((val) => val.split("").map((val) => (val == "#") ? true : false));
 		}
 	}
-
-	copy() {
-		const newTile = new WorldMapTile();
-		newTile.location = WorldMapCoordinates.from(this.location.toString());
-		newTile.contents = this.contents.map((val) => [...val]);
-		newTile.ID = this.ID;
-		return newTile;
-	}
 }
 
 class WorldMap {
@@ -183,12 +175,11 @@ class WorldMap {
 		return this.tiles[location.toString()];
 	}
 
-	tryPlace(_newTile) {
-		if (_newTile.location == null) return false;
-		if (this.tileAtLocation(_newTile.location) != null) return false;
-		const newTile = _newTile.copy();
+	tryPlace(newTile) {
+		if (newTile.location == null) return false;
+		if (this.tileAtLocation(newTile.location) != null) return false;
 		const offsets = {
-			[LEFT]: new WorldMapCoordinates(-1, 0), 
+			[LEFT]: new WorldMapCoordinates(-1, 0),
 			[TOP]: new WorldMapCoordinates(0, -1),
 			[RIGHT]: new WorldMapCoordinates(1, 0),
 			[BOTTOM]: new WorldMapCoordinates(0, 1)
@@ -240,8 +231,6 @@ module.exports = (input, part) => {
 	let increment = -1;
 	let maxY = 0;
 	let minY = 0;
-	let minX = 0;
-	let maxX = 0;
 	while (true) {
 		const oldValue = location.y;
 		for (let i=tiles.length-1; i>=0; i--) {
