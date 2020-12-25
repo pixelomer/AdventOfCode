@@ -29,7 +29,6 @@ module.exports = (input, part) => {
 		}
 	}
 
-	const cardLoopSize = findLoopSize(cardPublicKey);
 	const doorLoopSize = findLoopSize(doorPublicKey);
 
 	return transform(cardPublicKey, doorLoopSize);
