@@ -92,7 +92,7 @@ try {
 				if (expectedAnswers[part-1].length <= 0) return;
 				const start = Date.now();
 				removeConsoleLog();
-				const result = solve(testData, part);
+				const result = solve(testData, part, true);
 				restoreConsoleLog();
 				const end = Date.now();
 				if (result != expectedAnswers[part-1]) {
@@ -110,7 +110,7 @@ try {
 		process.exit(1);
 	}
 	removeConsoleLog();
-	result = solve(inputString, partNumber);
+	result = solve(inputString, partNumber, false);
 	restoreConsoleLog();
 }
 catch (err) {

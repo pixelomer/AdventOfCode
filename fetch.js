@@ -212,7 +212,7 @@ getMain("/events").then((main)=>{
 					}));
 					if (!fs.existsSync(`${dirPath}/solution.js`)) {
 						fs.writeFileSync(`${dirPath}/solution.js`,
-`module.exports = (input, part) => {
+`module.exports = (input, part, isTest) => {
 	// This function is the entry point for the solution.
 };`
 						);
