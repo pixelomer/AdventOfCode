@@ -1,7 +1,7 @@
 module.exports = (input, part) => {
 	const wires = input.split("\n");
 
-	const points = {};
+	const points = new Map();
 	let result = Number.MAX_SAFE_INTEGER;
 	for (let i=0; i<2; i++) {
 		const offsets = {
@@ -19,14 +19,16 @@ module.exports = (input, part) => {
 				currentPosition.y += offset.y ?? 0;
 				const key = `${currentPosition.x},${currentPosition.y}`;
 				if (i === 0) {
-					points[key] = points[key] ?? counter;
+					if (!points.has(key)) {
+						points.set(key, counter);
+					}
 				}
-				else if (points[key] != null) {
+				else if (points.get(key) != null) {
 					if (part === 1) {
 						result = Math.min(Math.abs(currentPosition.x) + Math.abs(currentPosition.y), result);
 					}
 					else {
-						result = Math.min(points[key] + counter, result);
+						result = Math.min(points.get(key) + counter, result);
 					}
 				}
 			}
