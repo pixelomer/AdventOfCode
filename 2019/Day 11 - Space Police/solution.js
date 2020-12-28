@@ -44,7 +44,7 @@ module.exports = (input, part) => {
 		let result = "";
 		for (let y=minY; y<=maxY; y++) {
 			for (let x=minX; x<=maxX; x++) {
-				result += map.get(`${x},${y}`) ? "#" : " ";
+				result += map.get(`${x},${y}`) ? "█" : " ";
 			}
 			result += "\n";
 		}

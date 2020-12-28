@@ -24,7 +24,7 @@ module.exports = (input, part) => {
 	}
 
 	if (part === 1) {
-		return result;
+		return multiplied;
 	}
 	
 	return layers.reduceRight((acc, val) => {
@@ -43,7 +43,7 @@ module.exports = (input, part) => {
 	}, null).map(val => {
 		return val.join("")
 			.replace(/2/g, " ") // Transparent (there shouldn't be any)
-			.replace(/1/g, "#") // Black
+			.replace(/1/g, "█") // Black
 			.replace(/0/g, " ") // White
-	});
+	}).join("\n");
 };
