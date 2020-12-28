@@ -81,7 +81,7 @@ function continueExecution(machine) {
 				ParameterMode.POSITION,
 				ParameterMode.POSITION
 			];
-			for (let i=0, val=Math.floor(instruction / 100); val != 0; val = Math.floor(val / 10), i++) {
+			for (let i=0, val=Math.floor(instruction / 100); (i < 3) && (val != 0); val = Math.floor(val / 10), i++) {
 				mode[i] = val % 10;
 			}
 			let x, y;
