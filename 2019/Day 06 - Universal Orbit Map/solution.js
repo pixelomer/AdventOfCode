@@ -27,14 +27,23 @@ module.exports = (input, part) => {
 			const path = [object];
 			let currentObject = object;
 			while (currentObject !== "COM") {
-				if (!Array.from(input.values()).some((val, index) => {
-					if (val.includes(currentObject)) {
-						const newObject = Array.from(input.keys())[index];
+				const iterator = input.entries();
+				let entry = iterator.next();
+				while (!entry.done) {
+					const pair = entry.value
+					if (pair[1].includes(currentObject)) {
+						const newObject = pair[0];
 						path.unshift(newObject);
 						currentObject = newObject;
-						return true;
+						break;
 					}
-				})) break;
+					entry = iterator.next();
+				}
+				if (entry.done) {
+					// This object is not connected to COM
+					// The data is probably corrupted
+					break;
+				}
 			}
 			return path;
 		}
