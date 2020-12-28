@@ -107,7 +107,7 @@ function parseArticle(node, spanHandler = null, parent = null) {
 		parsed += parseArticle(child, spanHandler, node);
 	});
 	return (parsed + suffix)
-		.replace(/<\/?.*>/g, "")
+		.replace(/<\/?[a-z"'\ A-Z=]+>/g, "")
 		.replace(/&nbsp;/g, " ")
 		.replace(/&gt;/g, ">")
 		.replace(/&lt;/g, "<");
