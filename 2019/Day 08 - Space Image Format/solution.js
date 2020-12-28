@@ -27,6 +27,20 @@ module.exports = (input, part) => {
 		return result;
 	}
 
+	// WARNING:
+	//   This program outputs the decoded image, not the answer. The image
+	//   contains 5 characters and those characters must be submitted instead
+	//   of the image itself.
+	// EXAMPLE:
+	//   For the output below, "KAUZA" should be submitted as the answer.
+	//   [
+	//     '#  #  ##  #  # ####  ##  ',
+	//     '# #  #  # #  #    # #  # ',
+	//     '##   #  # #  #   #  #  # ',
+	//     '# #  #### #  #  #   #### ',
+	//     '# #  #  # #  # #    #  # ',
+	//     '#  # #  #  ##  #### #  # '
+	//   ]
 	return layers.reduceRight((acc, val) => {
 		if (acc == null) {
 			return val.map(val => val.split(""));
