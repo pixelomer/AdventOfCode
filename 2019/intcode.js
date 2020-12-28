@@ -1,7 +1,8 @@
 const State = {
 	RUNNING: 0,
 	HALTED: 1,
-	ILLEGAL_INSTRUCTION: 2
+	ILLEGAL_INSTRUCTION: 2,
+	SUSPENDED: 3
 };
 
 const ParameterMode = {
@@ -19,16 +20,27 @@ constructEnum(ParameterMode);
 constructEnum(State);
 
 function run(memory, input = []) {
-	memory = [...memory];
-	input = [...input];
-	const output = [];
 	const machine = {
 		PC: 0,
-		state: State.RUNNING,
-		memory: memory,
-		unusedInput: input,
-		output: output
+		state: State.SUSPENDED,
+		memory: [...memory],
+		input: [...input],
+		output: []
 	};
+	continueExecution(machine);
+	return machine;
+}
+
+function continueExecution(machine) {
+	if (machine.state !== State.SUSPENDED) {
+		return machine;
+	}
+
+	machine.state = State.RUNNING;
+	
+	const memory = machine.memory;
+	const input = machine.input;
+	const output = machine.output;
 
 	function illegalInstruction() {
 		throw new Error();
@@ -56,9 +68,6 @@ function run(memory, input = []) {
 	}
 
 	function getInput() {
-		if (input.length == 0) {
-			illegalInstruction();
-		}
 		return input.shift();
 	}
 
@@ -96,7 +105,13 @@ function run(memory, input = []) {
 					break;
 				case 3:
 					// *p0 = get_input()
-					write(read(machine.PC++), getInput());
+					x = getInput();
+					if (x == null) {
+						machine.PC--;
+						machine.state = State.SUSPENDED;
+						break;
+					}
+					write(read(machine.PC++), x);
 					break;
 				case 4:
 					// output >>= 1
@@ -143,4 +158,4 @@ function run(memory, input = []) {
 	return machine;
 }
 
-module.exports = { run, State };
+module.exports = { run, continueExecution, State };

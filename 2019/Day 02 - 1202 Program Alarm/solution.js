@@ -7,7 +7,8 @@ module.exports = (input, part, isTest) => {
 			program[1] = 12;
 			program[2] = 2;
 		}
-		return intcode.run(program).memory[0];
+		const machine = intcode.run(program);
+		return machine.memory[0];
 	}
 	else {
 		for (let noun = 0; noun <= 99; noun++) {
