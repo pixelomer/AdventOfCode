@@ -88,7 +88,7 @@ function parseArticle(node, spanHandler = null, parent = null) {
 					suffix = `](${url})`;
 					break;
 				case "pre":
-					parsed += "``";
+					parsed += "\n``";
 					suffix += "``";
 					break;
 			}
@@ -107,10 +107,10 @@ function parseArticle(node, spanHandler = null, parent = null) {
 		parsed += parseArticle(child, spanHandler, node);
 	});
 	return (parsed + suffix)
-		.replace(/<\/?.*>/, "")
-		.replace("&nbsp;", " ")
-		.replace("&gt;", ">")
-		.replace("&lt;", "<");
+		.replace(/<\/?.*>/g, "")
+		.replace(/&nbsp;/g, " ")
+		.replace(/&gt;/g, ">")
+		.replace(/&lt;/g, "<");
 }
 
 const cookie = fs.readFileSync("cookie.txt");
