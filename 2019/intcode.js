@@ -7,8 +7,9 @@ const State = {
 
 const ParameterMode = {
 	POSITION: 0,
-	IMMEDIATE: 1
-}
+	IMMEDIATE: 1,
+	RELATIVE: 2
+};
 
 function constructEnum(obj) {
 	Object.keys(obj).forEach((key) => {
@@ -25,7 +26,8 @@ function run(memory, input = []) {
 		state: State.SUSPENDED,
 		memory: [...memory],
 		input: [...input],
-		output: []
+		output: [],
+		relativeBase: 0
 	};
 	continueExecution(machine);
 	return machine;
@@ -50,20 +52,32 @@ function continueExecution(machine) {
 		switch (mode) {
 			case ParameterMode.IMMEDIATE:
 				return address;
+			case ParameterMode.RELATIVE:
+				address += machine.relativeBase;
 			case ParameterMode.POSITION:
-				if (address > memory.length) {
+				if (address < 0) {
 					illegalInstruction();
 				}
+				memory.fill(0, memory.length, address+1);
 				return memory[address];
 			default:
 				illegalInstruction();
 		}
 	}
 
-	function write(address, value) {
-		if (address > memory.length) {
+	function write(address, value, mode) {
+		switch (mode) {
+			case ParameterMode.IMMEDIATE:
+			case ParameterMode.POSITION:
+				break;
+			case ParameterMode.RELATIVE:
+				address += machine.relativeBase;
+				break;
+		}
+		if (address < 0) {
 			illegalInstruction();
 		}
+		memory.fill(0, memory.length, address+1);
 		memory[address] = value;
 	}
 
@@ -72,7 +86,6 @@ function continueExecution(machine) {
 	}
 
 	while (machine.PC < memory.length) {
-		//console.log(memory);
 		const initialPC = machine.PC;
 		try {
 			let instruction = read(machine.PC++);
@@ -91,13 +104,13 @@ function continueExecution(machine) {
 					// *p2 = (*)p0 + (*)p1
 					x = read(read(machine.PC++), mode[0]);
 					y = read(read(machine.PC++), mode[1]);
-					write(read(machine.PC++), x + y);
+					write(read(machine.PC++), (x + y), mode[2]);
 					break;
 				case 2:
 					// *p2 = (*)p0 * (*)p1
 					x = read(read(machine.PC++), mode[0]);
 					y = read(read(machine.PC++), mode[1]);
-					write(read(machine.PC++), x * y);
+					write(read(machine.PC++), (x * y), mode[2]);
 					break;
 				case 99:
 					// halt
@@ -111,7 +124,7 @@ function continueExecution(machine) {
 						machine.state = State.SUSPENDED;
 						break;
 					}
-					write(read(machine.PC++), x);
+					write(read(machine.PC++), x, mode[0]);
 					break;
 				case 4:
 					// output >>= 1
@@ -134,13 +147,17 @@ function continueExecution(machine) {
 					// *p2 = (*)p0 < (*)p1
 					x = read(read(machine.PC++), mode[0]);
 					y = read(read(machine.PC++), mode[1]);
-					write(read(machine.PC++), (x < y) ? 1 : 0);
+					write(read(machine.PC++), ((x < y) ? 1 : 0), mode[2]);
 					break;
 				case 8:
 					// *p2 = (*)p0 == (*)p1
 					x = read(read(machine.PC++), mode[0]);
 					y = read(read(machine.PC++), mode[1]);
-					write(read(machine.PC++), (x == y) ? 1 : 0);
+					write(read(machine.PC++), ((x == y) ? 1 : 0), mode[2]);
+					break;
+				case 9:
+					// relative_base += (*)p0
+					machine.relativeBase += read(read(machine.PC++), mode[0]);
 					break;
 				default:
 					throw new Error();
@@ -150,6 +167,7 @@ function continueExecution(machine) {
 			// Rollback
 			machine.state = State.ILLEGAL_INSTRUCTION;
 			machine.PC = initialPC;
+			console.log("[WARNING] The Intcode program crashed.");
 		}
 		if (machine.state != State.RUNNING) {
 			break;
