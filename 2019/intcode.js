@@ -58,8 +58,7 @@ function continueExecution(machine) {
 				if (address < 0) {
 					illegalInstruction();
 				}
-				memory.fill(0, memory.length, address+1);
-				return memory[address];
+				return memory[address] ?? 0;
 			default:
 				illegalInstruction();
 		}
@@ -77,7 +76,9 @@ function continueExecution(machine) {
 		if (address < 0) {
 			illegalInstruction();
 		}
-		memory.fill(0, memory.length, address+1);
+		for (let i=memory.length; i<=address; i++) {
+			memory.push(0);
+		}
 		memory[address] = value;
 	}
 
