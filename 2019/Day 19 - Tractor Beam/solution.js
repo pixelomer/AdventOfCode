@@ -20,18 +20,16 @@ module.exports = (input, part) => {
 
 	let size = 100;
 	let rightMostY = 0;
+	let count = 0;
 	while (true) {
 		while (!forceAtLocation(size-1, rightMostY)) {
 			rightMostY++;
 		}
 		const x = size-100;
-		if (forceAtLocation(x, rightMostY)) {
-			let y = rightMostY;
-			const possibleAnswer = (x * 10000) + y;
-			let count = 0;
-			while (forceAtLocation(x, y++)) count++;
-			if (count === 100) return possibleAnswer;
-		}
+		let y = rightMostY + count;
+		const possibleAnswer = (x * 10000) + rightMostY;
+		while (forceAtLocation(x, y++)) count++;
+		if (count === 100) return possibleAnswer;
 		size++;
 	}
 }
