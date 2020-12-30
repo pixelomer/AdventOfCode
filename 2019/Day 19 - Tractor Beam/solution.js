@@ -1,5 +1,4 @@
 const intcode = require("../intcode");
-const fs = require("fs");
 
 module.exports = (input, part) => {
 	const program = input.split(",").map((val) => parseInt(val));
