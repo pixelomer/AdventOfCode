@@ -114,10 +114,6 @@ function parseArticle(node, spanHandler = null, parent = null) {
 }
 
 const cookie = fs.readFileSync("cookie.txt");
-if (!cookie) {
-	console.error(`${programName}: failed to read cookie.txt`);
-	process.exit(1);
-}
 
 function get(path) {
 	return fetch((baseURL + path), { headers:{ "Cookie": cookie } });

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
+const fetch = require('node-fetch');
 require("./utilities");
 
 /*
@@ -12,6 +13,14 @@ argv = [
 	"<part>"
 ] 
 */
+
+let cookie = null;
+if (!fs.existsSync("cookie.txt")) {
+	console.error("WARNING: cookie.txt is missing. Will not submit answers.");
+}
+else {
+	cookie = fs.readFileSync("cookie.txt", { encoding: 'utf-8' });
+}
 
 const consoleLogOrig = console.log;
 const consoleErrorOrig = console.error;
@@ -120,8 +129,67 @@ catch (err) {
 
 if (result != null) {
 	console.log(result);
-	process.exit(0);
+	if ((cookie != null) && ((typeof result === 'string') || (typeof result === 'number'))) {
+		process.stdout.write("Terminate program to cancel submission .");
+		setTimeout(() => {
+			process.stdout.write(" .");
+			setTimeout(() => {
+				console.log("\nSubmitting answer...");
+				const data = `level=${partNumber}&answer=${encodeURIComponent(result)}`;
+				const referer = `https://adventofcode.com/${+yearString}/day/${+dayString}`;
+				const url = `${referer}/answer`;
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Cookie': cookie,
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Referer' : referer
+					},
+					body: data
+				}).then((response) => {
+					if (response.status === 200) {
+						response.text().then((text) => {
+							if (text.includes("You don't seem to be solving the right level.")) {
+								console.log("This part has been solved before.");
+								process.exit(0);
+							}
+							else if (text.includes("That's the right answer!")) {
+								console.log("Solved!");
+								process.exit(0);
+							}
+							else if (text.includes("That's not the right answer.")) {
+								console.log("That's not right...");
+								const match = text.match(/please wait ([0-9]+) minutes before trying again/);
+								if (match != null) {
+									console.log(`You need to wait ${match[1]} minutes before trying again.`);
+								}
+								process.exit(1);
+							}
+							else if (text.includes("You gave an answer too recently")) {
+								console.log("You gave an answer too recently.");
+								const match = text.match(/You have ([0-9ms ]+?) left to wait/);
+								if (match != null) {
+									console.log(`Try again in ${match[1]}.`);
+								}
+								process.exit(1);
+							}
+							else {
+								console.log("Couldn't parse response.");
+								process.exit(1);
+							}
+						});
+					}
+					else {
+						console.log("Could not submit answer.");
+						console.log(response.status);
+						process.exit(1);
+					}
+				}, 1000);
+			}, 1000);
+		});
+	}
 }
-
-console.error(`${programName}: failed to solve challange`);
-process.exit(1);
+else {
+	console.error(`${programName}: failed to solve challange`);
+	process.exit(1);
+}
