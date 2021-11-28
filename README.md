@@ -1,6 +1,6 @@
 # Advent of Code Solutions
 
-These are my solutions for all of the Advent of Code challanges that exist. I wrote all of the solutions in JavaScript because I had just started using it when Advent of Code 2020 started and I wanted to improve myself. This means that some solutions might contain terrible code. They all work though ¯\\\_(ツ)\_/¯
+These are my solutions for Advent of Code. With Advent of Code, the goal is to quickly write code that works and not code that is maintainable so don't expect any readable code.
 
 ## Scripts
 
