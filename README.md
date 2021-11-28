@@ -1,6 +1,6 @@
 # Advent of Code Solutions
 
-These are my solutions for Advent of Code. With Advent of Code, the goal is to quickly write code that works and not code that is maintainable so don't expect any readable code.
+These are my solutions for Advent of Code. In Advent of Code, the goal is to quickly write code that works instead of code that is maintainable so don't expect any readable code.
 
 ## Scripts
 
