@@ -184,9 +184,9 @@ if (result != null) {
 						console.log(response.status);
 						process.exit(1);
 					}
-				}, 1000);
+				});
 			}, 1000);
-		});
+		}, 1000);
 	}
 }
 else {
