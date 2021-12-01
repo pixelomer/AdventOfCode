@@ -15,8 +15,8 @@ module.exports = (input, part) => {
 			let pass = true;
 			for (let j=0; j<line.length; j++) {
 				for (let k=j+1; k<line.length; k++) {
-					const pass1 = line[j].split("").sort((a,b) => a.charCodeAt(0) - b.charCodeAt(0)).join("");
-					const pass2 = line[k].split("").sort((a,b) => a.charCodeAt(0) - b.charCodeAt(0)).join("");
+					const pass1 = line[j].split("").sort((a,b) => a > b ? -1 : 1).join("");
+					const pass2 = line[k].split("").sort((a,b) => a > b ? -1 : 1).join("");
 					if (pass1 === pass2) {
 						pass = false;
 						k = j = line.length;

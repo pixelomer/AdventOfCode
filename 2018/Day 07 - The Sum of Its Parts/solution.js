@@ -30,7 +30,7 @@ module.exports = (input, part, isTest) => {
 				possibilities.push(key);
 			}
 		}
-		possibilities.sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0));
+		possibilities.sort((a, b) => a > b ? 1 : -1);
 		return possibilities;
 	}
 
