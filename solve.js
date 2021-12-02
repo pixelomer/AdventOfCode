@@ -218,7 +218,7 @@ if (result != null) {
 					process.exit(1);
 				}
 			});
-		}, 500);
+		}, 1000);
 	}
 }
 else {
