@@ -165,14 +165,6 @@ if (result != null) {
 					console.log("Solved!");
 					process.exit(0);
 				}
-				else if (text.includes("That's not the right answer.")) {
-					console.log("That's not right...");
-					const match = text.match(/please wait ([0-9]+) minutes before trying again/);
-					if (match != null) {
-						console.log(`You need to wait ${match[1]} minutes before trying again.`);
-					}
-					process.exit(1);
-				}
 				else if (text.includes("You gave an answer too recently")) {
 					console.log("You gave an answer too recently.");
 					const match = text.match(/You have ([0-9ms ]+?) left to wait/);
@@ -181,10 +173,24 @@ if (result != null) {
 					}
 					process.exit(1);
 				}
+				else if (text.includes("your answer is too high")) {
+					console.log("Your answer is too high.");
+				}
+				else if (text.includes("your answer is too low")) {
+					console.log("Your answer is too low.");
+				}
+				else if (text.includes("That's not the right answer")) {
+					console.log("That's not right...");
+				}
 				else {
 					console.log("Couldn't parse response.");
 					process.exit(1);
 				}
+				const match = text.match(/[Pp]lease wait ([0-9]+) minute(s?) before trying again/);
+				if (match != null) {
+					console.log(`Please wait ${match[1]} minute${match[2]} before trying again.`);
+				}
+				process.exit(1);
 			}).then((response) => {
 				if (response.status === 200) {
 					return response.text();
