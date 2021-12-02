@@ -212,7 +212,7 @@ if (result != null) {
 					process.exit(1);
 				}
 			});
-		}, 1500);
+		}, 500);
 	}
 }
 else {
