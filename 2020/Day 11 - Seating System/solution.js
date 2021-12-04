@@ -1,9 +1,3 @@
-// BLUNDER: When you attempt to replace a character in
-//  a string with `string[x] = char` in JavaScript,
-//  the character won't be replaced. However, an error
-//  won't be thrown either. It took me way too long to
-//  realize that.
-
 module.exports = (input, part) => {
 	const array = input.split("\n");
 	let currentState = array;

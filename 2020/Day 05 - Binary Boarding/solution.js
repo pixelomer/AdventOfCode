@@ -1,15 +1,6 @@
-// Personal stats:
-// [Part 1] 00:07:11, #611
-// [Part 2] 00:18:41, #1942
-
 // The encoding with B, R, L and F is just a different
 // way to represent binary.
 function parseBinary(str) {
-	// SPEED IMPROVEMENT: Although it is cleaner to parse 
-	//   the encoding this way, it might've been faster to
-	//   implement a parser like this:
-	//
-	//   return parseInt(str.replace(/[BR]/g, "1").replace(/[LF]/g, "0"), 2)
 	let x = 0;
 	for (var i=0; i<str.length; i++) {
 		switch (str[i]) {
@@ -24,9 +15,6 @@ function parseBinary(str) {
 }
 
 function getID(row, column) {
-	// BLUNDER: At first, I calculated the ID with (row * column + 8)
-	//   which resulted in me submitting an incorrect answer. I wasted
-	//   at least 1 minute because of this.
 	return row * 8 + column;
 }
 
@@ -35,9 +23,6 @@ module.exports = (input, part) => {
 	let highest = 0;
 	let seats = null;
 	if (part === 2) {
-		// SPEED IMPROVEMENT: Using seat IDs as indexes would've made it
-		//   easier to write the code since initializing a 2D array wouldn't
-		//   have been necessary.
 		seats = new Array();
 		for (var i=0; i<128; i++) {
 			seats.push(new Array(8));
@@ -47,10 +32,6 @@ module.exports = (input, part) => {
 		}
 	}
 	array.forEach((seat)=>{
-		// SPEED IMPROVEMENT: Treating the seat value as a 7-bit
-		//   value will give you the ID. Using that ID as an index
-		//   and completely ignoring the row and column values might've
-		//   saved a few seconds.
 		const row = parseBinary(seat.substr(0, 7));
 		const column = parseBinary(seat.substr(7, 3));
 		const id = getID(row, column);
@@ -60,7 +41,6 @@ module.exports = (input, part) => {
 		}
 	});
 	if (part === 2) {
-		// BLUNDER: The part 2 description took me way too long to understand.
 		for (let row=0; row<seats.length; row++) {
 			let fullSeatCount = 0;
 			let lastEmptyColumn = 0;

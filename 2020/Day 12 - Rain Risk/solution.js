@@ -1,7 +1,3 @@
-
-// Incorrect: 55910, 42872, 52776
-// BLUNDER: I don't even know anymore
-
 module.exports = (input, part) => {
 	const E=0, S=1, W=2, N=3;
 	const commands = input.split("\n");

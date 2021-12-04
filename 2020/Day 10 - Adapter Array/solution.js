@@ -35,7 +35,6 @@ module.exports = (input, part) => {
 		}
 		split.push(highest + 3);
 
-		// BLUNDER: It took me way too long to realize that I needed to use a cache.
 		const cache = {};
 
 		function findCombinations(currentEnd, availableAdapters, shouldLog = true) {

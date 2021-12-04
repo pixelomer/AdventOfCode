@@ -1,7 +1,3 @@
-// Personal stats:
-// [Part 1] 00:12:22, #326
-// [Part 2] 00:17:11, #216
-
 module.exports = (input, part) => {
 	const definitions = input.split("\n");
 	const bags = {};
@@ -34,9 +30,6 @@ module.exports = (input, part) => {
 		let count = 0;
 		bag.forEach((obj)=>{
 			count += numberOfBagsInsideBag(bags[obj.name]) * obj.count;
-			// BLUNDER: I added 1 to the count variable instead of obj.count
-			//   at first. As a result of this I submitted an invalid answer,
-			//   which means I lost at least 1 minute.
 			count += obj.count;
 		});
 		return count;

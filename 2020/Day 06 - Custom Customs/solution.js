@@ -1,7 +1,3 @@
-// Personal stats:
-// [Part 1] 00:03:40, #454
-// [Part 2] 00:09:15, #912
-
 module.exports = (input, part) => {
 	const groups = input.split("\n\n");
 	let sum = 0;
@@ -14,9 +10,6 @@ module.exports = (input, part) => {
 			sum += set.size;
 		}
 		else if (part === 2) {
-			// BLUNDER: For some reason, Map.forEach((value)=>{}) didn't
-			//   work in this code. It took me multiple minutes to realize
-			//   that I could simply switch to using an object instead.
 			const map = {};
 			const people = group.split("\n");
 			people.forEach((person)=>{

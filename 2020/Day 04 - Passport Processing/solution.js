@@ -25,9 +25,6 @@ module.exports = (input, part) => {
 				}
 				else if (key === "hgt") {
 					const number = parseInt(value.match(/^[0-9]+/g) ?? "0");
-
-					// BLUNDER: At first, I mixed up the places of "cm" and "in".
-					//   As a result of this, I lost at least 5 minutes.
 					if (value.endsWith("cm") && ((number < 150) || (number > 193))) {
 						return;
 					}
