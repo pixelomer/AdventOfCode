@@ -37,7 +37,6 @@ module.exports = (input, part, isTest) => {
 					if (boardNumbers[k] > 0) {
 						sum += boardNumbers[k];
 					}
-					boardNumbers[k] = Number.MAX_SAFE_INTEGER;
 				}
 				return sum * drawnNumbers[i];
 			}
