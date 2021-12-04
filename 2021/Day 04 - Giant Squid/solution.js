@@ -8,7 +8,7 @@ module.exports = (input, part, isTest) => {
 	for (let i=0; i<drawnNumbers.length; i++) {
 		for (let j=0; j<boardNumbers.length; j++) {
 			if (drawnNumbers[i] == boardNumbers[j]) {
-				boardNumbers[j] = -boardNumbers[j];
+				boardNumbers[j] = -1;
 			}
 		}
 		for (let j=0; j<boardNumbers.length; j+=25) {
