@@ -1,4 +1,4 @@
-function run(code, initial) {
+function run(code, initial, outputHandler) {
 	code = code.split("\n").map((line) => line.split(" "));
 	const reg = { 'a':0, 'b':0, 'c':0, 'd':0, ...(initial ?? {}) };
 
@@ -12,7 +12,7 @@ function run(code, initial) {
 		}
 	};
 
-	for (let pc=0; pc<code.length && pc>=0; pc++) {
+	for (let pc=0; (pc<code.length) && (pc>=0); pc++) {
 		//console.log(`${pc.toString(16).padStart(4, "0")}: ${code[pc].join(" ")}`);
 		const [opcode,operand1,operand2] = code[pc];
 
@@ -97,6 +97,14 @@ function run(code, initial) {
 					}
 					else {
 						target[0] = "jnz";
+					}
+				}
+				break;
+			case "out":
+				if (outputHandler != null) {
+					const shouldContinue = outputHandler(read(operand1), {...reg, pc});
+					if (!shouldContinue) {
+						pc = code.length;
 					}
 				}
 				break;
