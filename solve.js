@@ -170,7 +170,7 @@ async function main() {
 					else if (text.includes("That's the right answer!")) {
 						console.log("Solved!");
 						if ((partNumber == 1) && (process.platform === 'darwin')) {
-							const child = child_process.spawn("open", [referer], { shell: true });
+							const child = child_process.spawn("open", [referer]);
 							child.on("exit", () => process.exit(0));
 						}
 						else {
