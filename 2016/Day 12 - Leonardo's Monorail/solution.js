@@ -1,3 +1,10 @@
+const assembunny = require('../assembunny');
+
 module.exports = (input, part) => {
-	// This function is the entry point for the solution.
+	if (part === 1) {
+		return assembunny.run(input).a;
+	}
+	else {
+		return assembunny.run(input, { c: 1 }).a;
+	}
 };
