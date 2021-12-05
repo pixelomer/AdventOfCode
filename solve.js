@@ -86,6 +86,7 @@ async function main() {
 	let solve = require(`${process.cwd()}/solution.js`);
 
 	let result;
+	let executionTime;
 
 	try {
 		let testsFailed = false;
@@ -120,7 +121,9 @@ async function main() {
 			process.exit(1);
 		}
 		removeConsoleLog();
+		const start = Date.now();
 		result = await solve(inputString, partNumber, false);
+		executionTime = (Date.now() - start) / 1000.0;
 		restoreConsoleLog();
 	}
 	catch (err) {
@@ -130,6 +133,7 @@ async function main() {
 
 	if (result != null) {
 		console.log(result);
+		console.log(`${programName}: solved in ${executionTime}s`);
 		if ((cookie != null) && ((typeof result === 'string') || (typeof result === 'number'))) {
 			process.stdout.write("Terminate program to cancel submission...");
 			setTimeout(() => {
