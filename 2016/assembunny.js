@@ -102,8 +102,8 @@ function run(code, initial, outputHandler) {
 				break;
 			case "out":
 				if (outputHandler != null) {
-					const shouldContinue = outputHandler(read(operand1), {...reg, pc});
-					if (!shouldContinue) {
+					const shouldContinue = outputHandler(read(operand1));
+					if ((shouldContinue != null) && !shouldContinue) {
 						pc = code.length;
 					}
 				}
