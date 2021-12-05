@@ -2,6 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const fetch = require('node-fetch');
+const child_process = require('child_process');
 require("./utilities");
 
 /*
@@ -168,7 +169,13 @@ async function main() {
 					}
 					else if (text.includes("That's the right answer!")) {
 						console.log("Solved!");
-						process.exit(0);
+						if ((partNumber == 1) && (process.platform === 'darwin')) {
+							const child = child_process.spawn("open", [referer], { shell: true });
+							child.on("exit", () => process.exit(0));
+						}
+						else {
+							process.exit(0);
+						}
 					}
 					else if (text.includes("You gave an answer too recently")) {
 						console.log("You gave an answer too recently.");
