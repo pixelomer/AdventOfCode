@@ -24,10 +24,10 @@ module.exports = (input, part, isTest) => {
 			/**
 			 * Looks for the first digit that meets the specified
 			 * condition in the remaining digits and returns it.
-			 * @param {number | () => boolean} cond Condition that
-			 *   needs to be met. If a number is passed, the first
-			 *   digit with the specified number of signals will
-			 *   be returned.
+			 * @param {number | (signals: string) => boolean} cond
+			 *   Condition that needs to be met. If a number is passed,
+			 *   the first digit with the specified number of signals
+			 *   will be returned.
 			 * @returns {string} Signals.
 			 */
 			function find(cond) {
