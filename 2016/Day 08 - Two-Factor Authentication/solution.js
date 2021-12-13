@@ -64,5 +64,6 @@ module.exports = (input, part, isTest) => {
 	else {
 		console.log("Cannot decode this programmatically, you are on your own here");
 		console.log("\n" + renderScreen());
+		return {};
 	}
 };
