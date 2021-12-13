@@ -15,18 +15,19 @@ module.exports = (input, part, isTest) => {
 		});
 		if (part === 1) break;
 	}
+	const uniquePoints = new Set(paper.map((a) => `${a[0]},${a[1]}`));
 	if (part === 1) {
-		return new Set(paper.map((a) => `${a[0]},${a[1]}`)).size;
+		return uniquePoints.size;
 	}
 	paper = paper.filter((a) => (a[0] >= 0) && (a[1] >= 0));
-	const positions = Array.from(new Set(paper.map((a) => `${a[0]},${a[1]}`))).map((a) => a.split(",").map((a) => +a));
 	const result = [];
-	for (const point of positions) {
-		const yAxis = result[point[1]] ?? (result[point[1]] = []);
-		for (let x=0; x<point[0]; x++) {
-			yAxis[x] = yAxis[x] ?? " ";
+	for (const point of uniquePoints) {
+		const [x,y] = point.split(",");
+		const yAxis = result[+y] ?? (result[+y] = []);
+		for (let sx=yAxis.length; sx<x; sx++) {
+			yAxis[sx] = yAxis[sx] ?? " ";
 		}
-		yAxis[point[0]] = "#";
+		yAxis[x] = "#";
 	}
 	console.log("Cannot decode this programmatically, you are on your own here");
 	console.log("\n" + result.map((a) => a.map((a) => a??" ").join("")).join("\n"));
