@@ -1,340 +1,146 @@
-const LEFT = 0;
-const TOP = 1;
-const RIGHT = 2;
-const BOTTOM = 3;
-
-const TOP_LEFT = 0;
-const TOP_RIGHT = 1;
-const BOTTOM_LEFT = 2;
-const BOTTOM_RIGHT = 3;
-
-function boolArrayToString(array) {
-	return array.reduce(((acc, val) => acc += (val ? "#" : ".")), "");
-}
-
-function flip(array) {
-	const isString = String.isString(array);
-	if (isString) {
-		array = array.split("\n");
-	}
-	let result = array.map((item) =>
-		isString
-		? item.split("").reverse().join("")
-		: item.reverse()
-	);
-	if (isString) {
-		result = result.join("\n");
-	}
-	return result;
-}
-
-function rotateLeft(array) {
-	const isString = String.isString(array);
-	if (isString) {
-		array = array.split("\n").map((item) => item.split(""));
-	}
-	newContents = [];
-	for (let j=0; j<array[0].length; j++) {
-		newContents.push(array.reduce((acc, val) => {
-			acc.push(val[val.length-j-1]);
-			return acc;
-		}, []));
-	}
-	if (isString) {
-		newContents = newContents.map((item) => item.join("")).join("\n");
-	}
-	return newContents;
-}
-
-class WorldMapCoordinates {
-	x = 0;
-	y = 0;
-
-	constructor(x, y) {
-		if (!Number.isInteger(x) || !Number.isInteger(y)) {
-			throw new Error(`X and Y coordinates must be integers. Got {${x},${y}} instead.`);
-		}
-		this.x = x;
-		this.y = y;
-	}
-
-	toString() {
-		return `${this.x},${this.y}`;
-	}
-
-	static from(string) {
-		const split = string.split(",").map((val) => parseInt(val));
-		return new WorldMapCoordinates(split[0], split[1]);
-	}
-
-	copy() {
-		const newCoords = new WorldMapCoordinates(this.x, this.y);
-		return newCoords;
-	}
-}
-
-class WorldMapTile {
-	location = null;
-	contents = null;
-	edges = null;
-	ID = null;
-
-	getSide(side) {
-		switch (side) {
-			case BOTTOM: return this.contents[this.contents.length-1];
-			case TOP: return this.contents[0];
-			case LEFT:
-				return this.contents.reduce((acc, val) => {
-					acc.push(val[0]);
-					return acc;
-				}, []);
-			case RIGHT:
-				return this.contents.reduce((acc, val) => {
-					acc.push(val[val.length-1]);
-					return acc;
-				}, []);
-		}
-	}
-
-	matchesWithTile(edge, tile) {
-		const val1 = boolArrayToString(this.getSide(edge));
-		const val2 = boolArrayToString(tile.getSide((edge + 2) % 4));
-		return (val1 === val2);
-	}
-
-	flip() {
-		this.contents = flip(this.contents);
-	}
-
-	rotateLeft() {
-		this.contents = rotateLeft(this.contents);
-	}
-
-	constructor(inputData) {
-		if (inputData != null) {
-			this.contents = inputData.map((val) => val.split("").map((val) => (val == "#") ? true : false));
-		}
-	}
-}
-
-class WorldMap {
-	tiles = {};
-
-	_update(location, key, x, y) {
-		location.x = x(this.tiles[key].location.x, location.x);
-		location.y = y(this.tiles[key].location.y, location.y);
-	}
-
-	getEdges() {
-		const topLeft = new WorldMapCoordinates(0, 0);
-		const topRight = topLeft.copy();
-		const bottomLeft = topLeft.copy();
-		const bottomRight = topLeft.copy();
-		Object.keys(this.tiles).forEach((key) => {
-			this._update(topLeft, key, Math.min, Math.min);
-			this._update(topRight, key, Math.max, Math.min);
-			this._update(bottomLeft, key, Math.min, Math.max);
-			this._update(bottomRight, key, Math.max, Math.max);
-		});
-		return {
-			[TOP_LEFT]: topLeft,
-			[TOP_RIGHT]: topRight,
-			[BOTTOM_LEFT]: bottomLeft,
-			[BOTTOM_RIGHT]: bottomRight,
-		}
-	}
-
-	toString() {
-		const edges = this.getEdges();
-		let string = "";
-		let array = [];
-		while (edges[TOP_LEFT].y <= edges[BOTTOM_LEFT].y) {
-			for (let x=edges[TOP_LEFT].x; x<=edges[TOP_RIGHT].x; x++) {
-				const tile = this.tileAtLocation(new WorldMapCoordinates(x, edges[TOP_LEFT].y));
-				const contents = tile.contents.map((val) => boolArrayToString(val));
-				contents.forEach((value, index) => {
-					if ((index == 0) || (index == contents.length-1)) return;
-					index -= 1;
-					value = value.substr(1, value.length-2);
-					if (array.length <= index) {
-						array.push(value);
-					}
-					else {
-						array[index] += value;
-					}
-				});
-			}
-			string += array.join("\n") + "\n";
-			array = [];
-			edges[TOP_LEFT].y++;
-		}
-		return string.substr(0, string.length-1);
-	}
-
-	tileAtLocation(location) {
-		return this.tiles[location.toString()];
-	}
-
-	tryPlace(newTile) {
-		if (newTile.location == null) return false;
-		if (this.tileAtLocation(newTile.location) != null) return false;
-		const offsets = {
-			[LEFT]: new WorldMapCoordinates(-1, 0),
-			[TOP]: new WorldMapCoordinates(0, -1),
-			[RIGHT]: new WorldMapCoordinates(1, 0),
-			[BOTTOM]: new WorldMapCoordinates(0, 1)
-		};
-		for (let flipped=0; flipped<=1; flipped++) {
-			for (let rotation=0; rotation<4; rotation++) {
-				let side;
-				for (side=0; side<4; side++) {
-					const neighbourLocation = newTile.location.copy();
-					neighbourLocation.x += offsets[side].x;
-					neighbourLocation.y += offsets[side].y;
-					const neighbourTile = this.tileAtLocation(neighbourLocation);
-					if ((neighbourTile != null) && !newTile.matchesWithTile(side, neighbourTile)) {
-						side = 5;
-						break;
-					}
-				}
-				if (side == 4) {
-					// All checks passed!
-					this.tiles[newTile.location.toString()] = newTile;
-					return true;
-				}
-				newTile.rotateLeft();
-			}
-			newTile.flip();
-		}
-	}
-
-	constructor(initialTile) {
-		if (initialTile.location == null) {
-			initialTile.location = new WorldMapCoordinates(0,0);
-		}
-		else if (initialTile.location.toString() != "0,0") {
-			console.warn("Initial tile for map didn't have the coordinates \"0,0\".");
-		}
-		this.tiles[initialTile.location.toString()] = initialTile;
-	}
-}
-
 module.exports = (input, part) => {
-	const tiles = input.split("\n\n").map((val) => {
-		const split = val.split("\n");
-		const tile = new WorldMapTile(split.slice(1));
-		tile.ID = parseInt(split[0].substr(5));
-		return tile;
+	const UP=0, RIGHT=1, DOWN=2, LEFT=3;
+
+	function getBorder(tile, borderID) {
+		borderID %= 4;
+		switch (borderID) {
+			case UP:
+				return tile[0];
+			case DOWN:
+				return tile[tile.length-1];
+			case LEFT:
+				return tile.reduce((border, line) => border += line[0], "");
+			case RIGHT:
+				return tile.reduce((border, line) => border += line[line.length-1], "");
+		}
+	}
+
+	function rotate(tile) {
+		const newTile = new Array(tile.length).fill("", 0, tile.length);
+		for (let y=0; y<tile.length; y++) {
+			const rotated = tile[y].split("").reverse();
+			for (let x=0; x<tile[y].length; x++) {
+				newTile[x] += rotated[x];
+			}
+		}
+		return newTile;
+	}
+
+	function flip(tile) {
+		const newTile = [];
+		for (let i=0; i<tile.length; i++) {
+			newTile[tile.length-i-1] = tile[i];
+		}
+		return newTile;
+	}
+
+	function trim(tile) {
+		return tile.slice(1, tile.length-1).map((line) => line.slice(1, line.length-1));
+	}
+
+	const tiles = input.split("\n\n").map((desc) => {
+		desc = desc.split("\n");
+		const [tileID] = desc[0].match(/[0-9]+/g);
+		return {
+			id: +tileID,
+			data: desc.slice(1)
+		};
 	});
-	let map = new WorldMap(tiles.splice(0,1)[0]);
-	const location = new WorldMapCoordinates(0, -1);
-	let increment = -1;
-	let maxY = 0;
-	let minY = 0;
-	while (true) {
-		const oldValue = location.y;
-		for (let i=tiles.length-1; i>=0; i--) {
-			tiles[i].location = location.copy();
-			if (map.tryPlace(tiles[i])) {
-				tiles.splice(i, 1);
-				location.y += increment;
-			}
-		}
-		if (oldValue == location.y) {
-			if (increment == -1) {
-				minY = location.y + 1;
-				location.y = increment = 1;
-			}
-			else {
-				maxY = location.y - 1;
-				break;
+	
+	let map = [ [ tiles[0] ] ];
+	tiles.splice(0,1);
+
+	while (tiles.length !== 0) {
+		tilesLoop:
+		for (let i=0; i<tiles.length; i++) {
+			const tile = tiles[i];
+			// Get a tile on the map
+			for (let y=0; y<map.length; y++) {
+				for (let x=0; x<map[y].length; x++) {
+					if (map[y][x] == null) continue;
+					// Check borders
+					for (let rotateCount=0; rotateCount<4; rotateCount++) {
+						for (let flipCount=0; flipCount<2; flipCount++) {
+							for (let border=0; border<4; border++) {
+								if (getBorder(tile.data, border) === getBorder(map[y][x].data, border+2)) {
+									switch (border) {
+										case RIGHT:
+											if (x === 0) {
+												for (const line of map) line.splice(0, 0, null);
+												x += 1;
+											}
+											map[y][x-1] = tile;
+											break;
+										case LEFT:
+											map[y][x+1] = tile;
+											break;
+										case UP:
+											if (y === 0) {
+												map.splice(0, 0, map[0].map(() => null));
+												y += 1;
+											}
+											map[y-1][x] = tile;
+											break;
+										case DOWN:
+											if (y === map.length - 1) {
+												map.push(map[0].map(() => null));
+											}
+											map[y+1][x] = tile;
+											break;
+									}
+									tiles.splice(i, 1);
+									i--;
+									continue tilesLoop;
+								}
+							}
+							tile.data = flip(tile.data);
+						}
+						tile.data = rotate(tile.data);
+					}
+				}
 			}
 		}
 	}
-	for (let y=minY; y<=maxY; y++) {
-		location.x = -1;
-		location.y = y;
-		increment = -1;
-		while (true) {
-			const oldValue = location.x;
-			for (let i=tiles.length-1; i>=0; i--) {
-				tiles[i].location = location.copy();
-				if (map.tryPlace(tiles[i])) {
-					tiles.splice(i, 1);
-					location.x += increment;
-				}
-			}
-			if (oldValue == location.x) {
-				if (increment == -1) {
-					minX = location.x + 1;
-					location.x = increment = 1;
-				}
-				else {
-					maxX = location.x - 1;
-					break;
-				}
-			}
-		}
-	}
-	if (tiles.length != 0) {
-		console.log("There are still unplaced tiles.", tiles);
-		return null;
-	}
+	
 	if (part === 1) {
-		const edges = map.getEdges();
+		const width = map[0].length;
+		const height = map.length;
+		console.log(map);
 		return (
-			map.tileAtLocation(edges[TOP_LEFT]).ID
-			* map.tileAtLocation(edges[TOP_RIGHT]).ID
-			* map.tileAtLocation(edges[BOTTOM_LEFT]).ID
-			* map.tileAtLocation(edges[BOTTOM_RIGHT]).ID
+			map[0][0].id *
+			map[0][width - 1].id *
+			map[height - 1][0].id *
+			map[height - 1][width - 1].id 
 		);
 	}
-	else if (part === 2) {
-		function findSeaMonsters(map) {
-			const lines = map.split("\n");
-			let monsterCount = 0;
-			let didMatch = true;
-			while (didMatch) {
-				didMatch = false;
-				for (let line=0; line<=lines.length-3; line++) {
-					for (let start=0; start<=lines[line].length-20; start++) {
-						if (lines[line][start+18] == "#") {
-							//                   #
-							// #    ##    ##    ###
-							//  #  #  #  #  #  #   
-							const regex1 = new RegExp(`^(.{${start}})#(.{4})##(.{4})##(.{4})###(.*)$`);
-							const regex2 = new RegExp(`^(.{${start+1}})#(.{2})#(.{2})#(.{2})#(.{2})#(.{2})#(.*)$`);
-							if (
-								lines[line+1].match(regex1)
-								&& lines[line+2].match(regex2)
-							) {
-								regex1.lastIndex = 0;
-								regex2.lastIndex = 0;
-								lines[line] = lines[line].substr(0, start+18) + "O" + lines[line].substr(start+19);
-								lines[line+1] = lines[line+1].replace(regex1, "$1O$2OO$3OO$4OOO$5")
-								lines[line+2] = lines[line+2].replace(regex2, "$1O$2O$3O$4O$5O$6O$7");
-								didMatch = true;
-								monsterCount++;
-							}
-						}
-					}
+
+	map = map.map((line) => 
+		flip(line
+			.map((tile) => trim(tile.data))
+			.reduce((a, b) => (a == null) ? b : a.map((a,i) => a + b[i]), null)
+		)
+	).flat();
+
+	let monsterCount = 0;
+	
+	rotateLoop:
+	for (let rotateCount=0; rotateCount<4; rotateCount++) {
+		for (let flipCount=0; flipCount<2; flipCount++) {
+			for (let y=0; y<map.length-2; y++) {
+				for (let x=0; x<map[y].length-18; x++) {
+					if (map[y][x + 18] !== "#") continue;
+					if (!map[y+1].slice(x).match(/^#....##....##....###/)) continue;
+					if (!map[y+2].slice(x).match(/^.#..#..#..#..#..#.../)) continue;
+					monsterCount++;
 				}
 			}
-			return {
-				map: lines.join("\n"),
-				monsterCount: monsterCount
-			};
-		}
-		map = map.toString();
-		for (let flipped=0; flipped<=1; flipped++) {
-			for (let orientation=0; orientation<4; orientation++) {
-				const findings = findSeaMonsters(map);
-				if (findings.monsterCount > 0) {
-					return findings.map.match(/#/g).length;
-				}
-				map = rotateLeft(map);
+			if (monsterCount !== 0) {
+				break rotateLoop;
 			}
 			map = flip(map);
 		}
+		map = rotate(map);
 	}
+
+	return map.join("").match(/#/g).length - monsterCount * 15;
 };
