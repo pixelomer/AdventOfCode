@@ -28,8 +28,9 @@ module.exports = (input, part, isTest) => {
 					continue;
 				}
 			}
-			const newPath = [...path, next];
-			distinctPaths += advance(newPath, didVisitException || isException);
+			path.push(next);
+			distinctPaths += advance(path, didVisitException || isException);
+			path.pop();
 		}
 		return distinctPaths;
 	}
