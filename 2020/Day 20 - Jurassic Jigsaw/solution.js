@@ -105,7 +105,6 @@ module.exports = (input, part) => {
 	if (part === 1) {
 		const width = map[0].length;
 		const height = map.length;
-		console.log(map);
 		return (
 			map[0][0].id *
 			map[0][width - 1].id *
@@ -122,7 +121,7 @@ module.exports = (input, part) => {
 	).flat();
 
 	let monsterCount = 0;
-	
+
 	rotateLoop:
 	for (let rotateCount=0; rotateCount<4; rotateCount++) {
 		for (let flipCount=0; flipCount<2; flipCount++) {
