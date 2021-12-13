@@ -119,12 +119,10 @@ module.exports = (input, part) => {
 		);
 	}
 
-	map = map.map((line) => 
-		flip(line
-			.map((tile) => trim(tile.data))
-			.reduce((a, b) => (a == null) ? b : a.map((a,i) => a + b[i]), null)
-		)
-	).flat();
+	map = map.map((line) => line
+		.map((tile) => trim(tile.data))
+		.reduce((a, b) => (a == null) ? b : a.map((a,i) => a + b[i]), null)
+	).reverse().flat();
 
 	let monsterCount = 0;
 
