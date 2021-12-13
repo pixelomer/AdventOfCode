@@ -58,6 +58,12 @@ module.exports = (input, part) => {
 			for (let y=0; y<map.length; y++) {
 				for (let x=0; x<map[y].length; x++) {
 					if (map[y][x] == null) continue;
+					if (
+						(map[y+1]?.[x] != null) &&
+						(map[y]?.[x+1] != null) &&
+						(map[y-1]?.[x] != null) &&
+						(map[y]?.[x-1] != null)
+					) continue;
 					// Check borders
 					for (let rotateCount=0; rotateCount<4; rotateCount++) {
 						for (let flipCount=0; flipCount<2; flipCount++) {
