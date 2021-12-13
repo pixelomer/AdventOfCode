@@ -30,6 +30,6 @@ module.exports = (input, part, isTest) => {
 		yAxis[x] = "#";
 	}
 	console.log("Cannot decode this programmatically, you are on your own here");
-	console.log("\n" + result.map((a) => a.map((a) => a??" ").join("")).join("\n"));
+	console.log("\n" + result.map((a) => a.join(" ")).join("\n"));
 	return {};
 };
