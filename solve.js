@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const fetch = require('node-fetch');
 const child_process = require('child_process');
+const lzma = require('lzma-native');
 require("./utilities");
 
 /*
@@ -93,8 +94,37 @@ async function main() {
 		let testsFailed = false;
 		if (fs.existsSync(`${process.cwd()}/tests`)) {
 			for (let fileName of fs.readdirSync(`${process.cwd()}/tests`)) {
-				if (fileName.startsWith(".") || !fileName.endsWith(".txt")) return;
-				let testData = fs.readFileSync(`${process.cwd()}/tests/${fileName}`).toString();
+				if (fileName.startsWith(".")) return;
+				let testData;
+				const testPath = `${process.cwd()}/tests/${fileName}`;
+				if (fileName.endsWith(".xz")) {
+					try {
+						const compressedStream = fs.createReadStream(testPath);
+						const decompressor = lzma.createDecompressor();
+						compressedStream.pipe(decompressor);
+						const chunks = [];
+						process.stderr.write(`${programName}: decompressing test... `);
+						testData = await new Promise((resolve, reject) => {
+							decompressor.on('data', (chunk) => chunks.push(chunk));
+							decompressor.on('error', (err) => reject(err));
+							decompressor.on('end', () => resolve(Buffer.concat(chunks)));
+						});
+						const size = Math.round(100 * testData.length / (1024 * 1024)) / 100; 
+						console.error(`${size} MiB`);
+						testData = testData.toString('utf-8');
+					}
+					catch (err) {
+						console.error(err);
+						console.error(`${programName}: failed to decompress test "${fileName}", skipping`);
+						continue;
+					}
+				}
+				else if (fileName.endsWith(".txt")) {
+					testData = fs.readFileSync(testPath, { encoding: 'utf-8' });
+				}
+				else {
+					continue;
+				}
 				const splitTestData = testData.split("\n");
 				testData = splitTestData.slice(1).join("\n");
 				const expectedAnswers = splitTestData[0].split("|");
