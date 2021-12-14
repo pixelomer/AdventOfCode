@@ -121,7 +121,7 @@ function get(path) {
 
 function getMain(path) {
 	return new Promise((resolve, reject) => {
-		get(path).then((res) => res.text().then((str) => {
+		get(path).then((res) => res.text()).then((str) => {
 			// Using regex to parse HTML isn't a good thing but
 			// <main> is only ever used once in the document and
 			// this is much easier than using the HTML parser to
@@ -141,7 +141,7 @@ function getMain(path) {
 				}
 			);
 			resolve(html);
-		}));
+		}).catch(reject);
 	});
 }
 
