@@ -135,6 +135,9 @@ async function main() {
 	if (result != null) {
 		console.log(result);
 		console.log(`${programName}: solved in ${executionTime}s`);
+		if (typeof result === 'bigint') {
+			result = result.toString();
+		}
 		if ((cookie != null) && ((typeof result === 'string') || (typeof result === 'number'))) {
 			process.stdout.write("Terminate program to cancel submission...");
 			setTimeout(() => {
