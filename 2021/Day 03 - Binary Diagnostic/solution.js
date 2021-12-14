@@ -8,7 +8,7 @@ module.exports = (input, part, isTest) => {
 			let zeroes = 0;
 			for (let i=0; i<input.length; i++) {
 				if (input[i][j] == 1) {
-					ones++
+					ones++;
 				}
 				else zeroes++;
 			}
@@ -21,7 +21,7 @@ module.exports = (input, part, isTest) => {
 				epsilon += "1";
 			}
 		}
-		return parseInt(gamma, 2) * parseInt(epsilon, 2);
+		return BigInt("0b" + gamma) * BigInt("0b" + epsilon);
 	}
 	else {
 		function find(input, compare) {
@@ -36,7 +36,7 @@ module.exports = (input, part, isTest) => {
 				const filter = compare(ones, zeroes);
 				input = input.filter((a) => a[i] == filter);
 			}
-			const result = parseInt(input[0] ?? 0, 2);
+			const result = BigInt("0b" + (input[0] ?? 0));
 			return result;
 		}
 		const oxygen = find(input, (one, zero) => one >= zero ? 1 : 0);
