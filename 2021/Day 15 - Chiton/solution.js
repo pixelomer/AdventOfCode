@@ -7,6 +7,9 @@ class LinkedList {
 	length = 0;
 	
 	constructor(source) {
+		if (source == null) {
+			return;
+		}
 		let lastNode = this.head;
 		for (const value of source) {
 			lastNode = this.insertAfter(lastNode, value);
@@ -44,7 +47,7 @@ class LinkedList {
 	}
 }
 
-module.exports = (input, part, isTest) => {
+module.exports = (input, part) => {
 	const map = input.split("\n").map((a) => a.split("").map((a) => +a));
 
 	const multiplier = (part === 1) ? 1 : 5;
@@ -60,16 +63,22 @@ module.exports = (input, part, isTest) => {
 		return (map[y][x] - 1 + change) % 9 + 1;
 	}
 
-	const nodes = [];
-	const getNodeIndex = (x, y) =>
-		((x < realWidth) && (y < realHeight) && (x >= 0) && (y >= 0)) ?
-		((y * realHeight) + x)
-		: -1;
-	const getNode = (x, y) => nodes[getNodeIndex(x, y)];
+	const nodes = new Array();
 
-	for (let y=0; y<realHeight; y++) {
-		for (let x=0; x<realWidth; x++) {
-			const index = getNodeIndex(x, y);
+	function getNodeIndex(x, y) {
+		return (
+			((x < realWidth) && (y < realHeight) && (x >= 0) && (y >= 0)) ?
+			((y * realHeight) + x)
+			: -1
+		);
+	}
+
+	function getNode(x, y) {
+		const index = getNodeIndex(x, y);
+		if (index === -1) {
+			return null;
+		}
+		if (nodes[index] === undefined) {
 			nodes[index] = {
 				distance: Number.MAX_SAFE_INTEGER,
 				length: getRisk(x, y),
@@ -79,16 +88,15 @@ module.exports = (input, part, isTest) => {
 				y: y
 			};
 		}
+		return nodes[index] ?? null;
 	}
 
-	const unvisited = new LinkedList(nodes);
-	for (const listItem of unvisited) {
-		listItem.value.listItem = listItem;
-	}
+	const unvisited = new LinkedList();
 
 	let node = getNode(0, 0);
 	node.distance = 0;
 	const destination = getNode(realWidth-1, realHeight-1);
+	let i=0;
 	while (!destination.visited) {
 		// Advance pathfinder
 		const {x,y} = node;
@@ -103,7 +111,9 @@ module.exports = (input, part, isTest) => {
 				neighbour.previous = node;
 
 				// Move neighbour to the beginning of the linked list
-				unvisited.remove(neighbour.listItem);
+				if (neighbour.listItem != null) {
+					unvisited.remove(neighbour.listItem);
+				}
 				neighbour.listItem = unvisited.insert(neighbour);
 			}
 		}
@@ -112,7 +122,12 @@ module.exports = (input, part, isTest) => {
 		node.visited = true;
 
 		// Remove node from the linked list
-		unvisited.remove(node.listItem);
+		if (node.listItem != null) {
+			unvisited.remove(node.listItem);
+		}
+
+		// Get rid of the old node entirely as it is no longer needed
+		nodes[getNodeIndex(x, y)] = null;
 
 		// Find a new node
 		let newNode;
@@ -125,6 +140,7 @@ module.exports = (input, part, isTest) => {
 				break;
 			}
 		}
+
 		node = newNode;
 	}
 
