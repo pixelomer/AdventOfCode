@@ -56,6 +56,5 @@ module.exports = (input, part, isTest) => {
 		max = Math.max(state[key], max);
 		min = Math.min(state[key], min);
 	}
-	console.log(max, min);
 	return max - min;
 };
