@@ -110,7 +110,7 @@ module.exports = (input, part, isTest) => {
 				result = (values[0] === values[1]) ? 1 : 0;
 				break;
 			default:
-				throw new Error("Impossible type" + packet.type);
+				throw new Error(`Impossible packet type ${packet.type}`);
 		}
 		return result;
 	}
