@@ -1,35 +1,36 @@
 module.exports = (input, part, isTest) => {
-	function tryExplode(number, level) {
-		if (level == null) {
-			return tryExplode.call({
-				didExplode: false,
-				addToPrevious: ()=>{},
-				addToNext: 0
-			}, number, 1);
-		}
-		for (let i=0; i<number.length; i++) {
-			if (this.didExplode && (this.addToNext === 0)) {
-				break;
-			}
-			const subNumber = number[i];
-			if (typeof subNumber === 'number') {
-				this.addToPrevious = (x) => number[i] += x;
-				number[i] += this.addToNext;
-				this.addToNext = 0;
-			}
-			else {
-				if ((level === 4) && !this.didExplode) {
-					this.addToPrevious(subNumber[0]);
-					this.addToNext = subNumber[1];
-					number[i] = 0;
-					this.didExplode = true;
+	function tryExplode(number) {
+		const state = {
+			didExplode: false,
+			addToPrevious: (x)=>{},
+			addToNext: 0
+		};
+		function process(number, level) {
+			for (let i=0; i<number.length; i++) {
+				if (state.didExplode && (state.addToNext === 0)) {
+					break;
+				}
+				const subNumber = number[i];
+				if (typeof subNumber === 'number') {
+					state.addToPrevious = (x) => number[i] += x;
+					number[i] += state.addToNext;
+					state.addToNext = 0;
 				}
 				else {
-					tryExplode.call(this, subNumber, level+1);
+					if ((level === 4) && !state.didExplode) {
+						state.addToPrevious(subNumber[0]);
+						state.addToNext = subNumber[1];
+						number[i] = 0;
+						state.didExplode = true;
+					}
+					else {
+						process(subNumber, level+1);
+					}
 				}
 			}
 		}
-		return this.didExplode;
+		process(number, 1);
+		return state.didExplode;
 	}
 
 	function trySplit(number) {
