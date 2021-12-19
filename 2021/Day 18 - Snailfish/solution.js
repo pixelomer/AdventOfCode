@@ -3,11 +3,14 @@ module.exports = (input, part, isTest) => {
 		if (level == null) {
 			return tryExplode.call({
 				didExplode: false,
-				addToPrevious: (x)=>{},
+				addToPrevious: ()=>{},
 				addToNext: 0
 			}, number, 1);
 		}
 		for (let i=0; i<number.length; i++) {
+			if (this.didExplode && (this.addToNext === 0)) {
+				break;
+			}
 			const subNumber = number[i];
 			if (typeof subNumber === 'number') {
 				this.addToPrevious = (x) => number[i] += x;
