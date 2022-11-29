@@ -163,13 +163,25 @@ getMain("/events").then((main)=>{
 				const path = link.attributes["href"];
 				const pathMatches = path.match(/^\/([0-9]{4,})\/day\/([0-9]{1,2})$/);
 				if (process.argv[2] !== "all") {
-					if (fs.readdirSync(year).some((directoryName)=>{
-						const directoryMatches = directoryName.match(/^Day ([0-9]{2})/);
-						if (parseInt(directoryMatches[1]) === parseInt(pathMatches[2])) {
-							return true;
+					const dir = fs.opendirSync(year);
+					/** @type {fs.Dirent} */
+					let file;
+					let exists = false;
+					while ((file = dir.readSync()) != null) {
+						const directoryMatches = file.name.match(/^Day ([0-9]{2})/);
+						if (directoryMatches == null) continue;
+						if (!file.isDirectory()) {
+							throw new Error(`Day folder is a file?? Path: "${year}/${file.name}"`)
 						}
-						return false;
-					})) return;
+						if (parseInt(directoryMatches[1]) === parseInt(pathMatches[2])) {
+							if (process.argv[2] !== `${year}-${pathMatches[2]}`) {
+								exists = true;
+							}
+							break;
+						}
+					}
+					dir.closeSync();
+					if (exists) return;
 				}
 				getMain(path).then((main)=>{
 					const articles = main.querySelectorAll("article");

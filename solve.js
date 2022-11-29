@@ -202,13 +202,21 @@ async function main() {
 					}
 					else if (text.includes("That's the right answer!")) {
 						console.log("Solved!");
-						if ((partNumber == 1) && (process.platform === 'darwin')) {
-							const child = child_process.spawn("open", [referer]);
-							child.on("exit", () => process.exit(0));
+						const children = [];
+						process.chdir("../..");
+						if (partNumber == 1) {
+							if (process.platform === 'darwin') {
+								children.push(child_process.spawn("open", [referer]));
+							}
+							children.push(child_process.spawn("node", ["fetch",
+								`${yearString}-${parseInt(dayString)}`]));
 						}
 						else {
 							process.exit(0);
 						}
+						Promise.all(children.map((child) =>
+							new Promise((resolve) => child.on("exit", () => resolve()))
+						)).then(() => process.exit(0));
 					}
 					else if (text.includes("You gave an answer too recently")) {
 						console.log("You gave an answer too recently.");
