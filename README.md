@@ -2,6 +2,8 @@
 
 These are my solutions for Advent of Code. I was still new to JavaScript when I started solving Advent of Code puzzles so some of the solutions here could be really bad.
 
+These solutions were made for node.js v16.13.0 and may not work for older versions.
+
 ## Scripts
 
 ### `./fetch.js [all]`
