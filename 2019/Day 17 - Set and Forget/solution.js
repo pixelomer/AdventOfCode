@@ -110,7 +110,7 @@ module.exports = (input, part) => {
 					if (i === index) return false;
 					if (path[i] === val) {
 						const slice2 = path.slice(index, index+count);
-						if ([slice1, slice2].some((slice) => slice.some((val) => String.isString(val) && val.match(/[ABC]/)))) {
+						if ([slice1, slice2].some((slice) => slice.some((val) => (typeof val === 'string') && val.match(/[ABC]/)))) {
 							return false;
 						}
 						return isEqual(slice1, slice2);

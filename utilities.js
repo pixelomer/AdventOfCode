@@ -1,7 +1,3 @@
-String.isString = (obj) => {
-	return (Object.prototype.toString.call(obj) === '[object String]');
-}
-
 // Greatest Common Divisor (GCD)
 Math.gcd = (x, y) => {
 	if (y > x) [y, x] = [x, y];

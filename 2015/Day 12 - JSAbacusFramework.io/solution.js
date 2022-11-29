@@ -12,7 +12,7 @@ module.exports = (input, part) => {
 				});
 				return newArray;
 			}
-			else if (String.isString(object) || !isNaN(object)) {
+			else if ((typeof object === 'string') || !isNaN(object)) {
 				// String or number
 				return object;
 			}
