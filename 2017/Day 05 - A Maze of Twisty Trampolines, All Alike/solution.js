@@ -1,3 +1,17 @@
 module.exports = (input, part) => {
-	// This function is the entry point for the solution.
+	const instr = input.split("\n").map((a) => +a);
+	let i = 0;
+	let steps = 0;
+	while (i < instr.length) {
+		const val = instr[i];
+		if ((val >= 3) && (part === 2)) {
+			instr[i]--;
+		}
+		else {
+			instr[i]++;
+		}
+		i += val;
+		steps++;
+	}
+	return steps;
 };
