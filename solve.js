@@ -168,7 +168,7 @@ async function main() {
 		if (typeof result === 'bigint') {
 			result = result.toString();
 		}
-		if ((cookie != null) && ((typeof result === 'string') || (typeof result === 'number'))) {
+		if ((cookie != null) && ((typeof result === 'string') || ((typeof result === 'number') && !isNaN(result)))) {
 			process.stdout.write("Terminate program to cancel submission...");
 			setTimeout(() => {
 				console.log("\nSubmitting answer...");
