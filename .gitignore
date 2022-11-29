@@ -1,7 +1,15 @@
-package-lock.json
-node_modules
-cookie.txt
-*/*/README.md
-*/*/input.txt
-*/*/*.png
+*
+!.gitattributes
+!.gitignore
+!fetch.sh
+!package.json
+!README.md
+!solve.js
+!utilities.js
+!2???/
+!2???/Day */
+!2???/Day */*
+2???/Day */README.md
+2???/Day */input.txt
+2???/**/*.png
 **/.DS_Store
