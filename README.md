@@ -1,14 +1,16 @@
 # Advent of Code Solutions
 
-These are my solutions for Advent of Code. I was still new to JavaScript when I started solving Advent of Code puzzles so some of the solutions here could be really bad.
+My solutions for Advent of Code written in JavaScript. 
 
-These solutions were made for node.js v16.13.0 and may not work for older versions.
+These solutions were made for node.js v16.13.0 and may not work with older versions.
 
 ## Scripts
 
-### `./fetch.js [all]`
+### `./fetch.js`
 
 Fetches day inputs and descriptions from Advent of Code and places them into the correct folders. Specify `all` as the first argument to fetch everything even if some of them are already available locally. You must have a valid cookie in the `cookie.txt` file for this script to work.
+
+You may also specify a date like `2021-2` to only fetch a specific date.
 
 ### `./solve.js <year> <day> <part>`
 
