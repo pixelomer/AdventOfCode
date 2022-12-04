@@ -37,4 +37,3 @@ module.exports = (input, part, isTest) => {
 
 	return items.reduce((a, b) => a + priority(b), 0);
 };
-
