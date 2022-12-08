@@ -220,7 +220,8 @@ getMain("/events").then((main)=>{
 					}));
 					if (!fs.existsSync(`${dirPath}/solution.js`)) {
 						fs.writeFileSync(`${dirPath}/solution.js`,
-`module.exports = (input, part, isTest) => {
+`/** @type { (input: string, part: number, isTest: boolean) => any } */
+module.exports = (input, part, isTest) => {
 	input = input.split("\\n");
 };`
 						);
