@@ -6,13 +6,13 @@ module.exports = (input, part, isTest) => {
 	let mod = 1;
 	for (let monkey of input) {
 		monkey = monkey.split("\n");
-		let num = +monkey[0].match(/(\d+)/)[1];
+		let num = +monkey[0].match(/(\d+):$/)[1];
 		let items = monkey[1].match(/: (.*)$/)[1].split(",").map((a) => +a);
-		let operation = monkey[2].match(/: new \= (.*)$/)[1];
-		let test = +monkey[3].match(/: divisible by (.*)$/)[1];
+		let operation = monkey[2].match(/\= (.*)$/)[1];
+		let test = +monkey[3].match(/(\d+)$/)[1];
 		mod *= test;
-		let trueMonkey = +monkey[4].match(/: throw to monkey (\d+)$/)[1];
-		let falseMonkey = +monkey[5].match(/: throw to monkey (\d+)$/)[1];
+		let trueMonkey = +monkey[4].match(/(\d+)$/)[1];
+		let falseMonkey = +monkey[5].match(/(\d+)$/)[1];
 		monkeys[num] = { operation, items, test, trueMonkey, falseMonkey,
 			inspected: 0 };
 	}
